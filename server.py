@@ -1,5 +1,6 @@
 import socket
 import select
+import sys
 
 HEADER_LENGTH = 20
 
@@ -85,7 +86,7 @@ while True:
             # Also save username and username header
             clients[client_socket] = user
 
-            print('New Connection {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
+            print('New Connection {}:{}, {}'.format(*client_address, user['data'].decode('utf-8')))
 
 
         # Else existing socket is sending a message
@@ -101,7 +102,7 @@ while True:
                 # Remove from list for socket.socket()
                 sockets_list.remove(notified_socket)
 
-                # Remove from our list of users
+                 #Remove from our list of users
                 del clients[notified_socket]
 
                 continue
@@ -109,12 +110,12 @@ while True:
             # Get user by notified socket, so we will know who sent the message
             user = clients[notified_socket]
 
+
             print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
 
             message_decoded = message["data"].decode("utf-8")
 
-            if message_decoded == 'ALERT':
-                print("ALERT : ALL ALARMS SWITCHED ON")
+
 
             # Iterate over connected clients and broadcast message
             for client_socket in clients:
