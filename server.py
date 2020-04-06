@@ -2,7 +2,7 @@ import socket
 import select
 import sys
 
-HEADER_LENGTH = 20
+HEADER_LENGTH = 100
 
 IP = "127.0.0.1"
 PORT = 1234

@@ -3,13 +3,13 @@ import select
 import errno
 import sys
 
-HEADER_LENGTH = 20
+HEADER_LENGTH = 100
 
 IP = "127.0.0.1"
 PORT = 5678
 
 my_username = input("Sensor Name: ")
-username = my_username
+username = 'SensorClient- ' + my_username
 
 print("OPTIONS:")
 print("To represent person entering the shop type: 'ENTRY'")

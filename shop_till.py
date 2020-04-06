@@ -6,16 +6,17 @@ import sys
 HEADER_LENGTH = 100
 
 IP = "127.0.0.1"
-PORT = 1234
+PORT = 5678
+
+my_username = input("Till Name: ")
+username = 'TillClient- ' + my_username
 
 
 
-shop_id = input("What shop would you like to view? : ")
-print('Waiting on information...',  end="\r")
-username = 'PhoneClient - ' + shop_id
+
 
 # Create a socket
-# socket.AF_INET
+# socket.AF_INET - address family, IPv4, some otehr possible are AF_INET6, AF_BLUETOOTH, AF_UNIX
 # socket.SOCK_STREAM - TCP
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -32,11 +33,23 @@ username = username.encode('utf-8')
 username_header = f"{len(username):<{HEADER_LENGTH}}".encode('utf-8')
 client_socket.send(username_header + username)
 
-
 while True:
 
+    # Wait for user to input a message
+    message = input(f'ID of scanned item: ')
+
+
+    # If message not empty - send it
+    if message:
+
+
+        # Encode message to bytes, prepare header and convert to bytes, like for username above, then send
+        message = message.encode('utf-8')
+        message_header = f"{len(message):<{HEADER_LENGTH}}".encode('utf-8')
+        client_socket.send(message_header + message)
+
     try:
-        # Now we want to loop over received messages and print them
+
         while True:
 
             # Receive our "header" containing username length, it's size is defined and constant
@@ -46,37 +59,6 @@ while True:
             if not len(username_header):
                 print('Connection closed by the server')
                 sys.exit()
-
-            # Convert header to int value
-            username_length = int(username_header.decode('utf-8').strip())
-
-            # Receive and decode username
-            username = client_socket.recv(username_length).decode('utf-8')
-
-            # Now do the same for message (as we received username, we received whole message, there's no need to check if it has any length)
-            message_header = client_socket.recv(HEADER_LENGTH)
-            message_length = int(message_header.decode('utf-8').strip())
-            message = client_socket.recv(message_length).decode('utf-8')
-
-            message = message.split()
-            count = message[0]
-
-
-            id = username.split()
-            if shop_id == id[-1]:
-
-                if count =='1':
-                    count_output = f'There is currently {count} person in {shop_id} now'
-                else:
-                    count_output = f'There is currently {count} people in {shop_id} now'
-
-                print(count_output)
-                print(str(message))
-
-
-                    #message = message.encode('utf-8')
-                    #message_header = f"{len(message):<{HEADER_LENGTH}}".encode('utf-8')
-                    #client_socket.send(message_header + message)
 
 
     except IOError as e:
