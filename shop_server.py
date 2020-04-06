@@ -1,6 +1,8 @@
+import csv
 import socket
 import select
 import errno
+import sys
 
 HEADER_LENGTH = 20
 
@@ -33,6 +35,28 @@ client_socket.setblocking(False)
 username = my_username.encode('utf-8')
 username_header = f"{len(username):<{HEADER_LENGTH}}".encode('utf-8')
 client_socket.send(username_header + username)
+
+def checkStock(itemid):
+    itemid = str(itemid)
+    with open('Stocklist.csv', mode='r') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')  # open the database
+        rows = list(csv_reader)  # store rows of database in rows
+        length = len(rows)  # find the number of rows
+
+        i = 0
+        while i != length:
+            if rows[i][0] == itemid:
+                break  # break when the item id  has been located in the database
+            else:
+                i = i + 1
+            # when the while loop finishes i will store the line number the item id was found on
+        if i == length:
+            print("Invalid item ID")
+            return 0
+        else:
+            itemquantity = rows[i][2] #set the itemquantity to the quantity of the item searched
+            return itemquantity
+
 
 while True:
 
