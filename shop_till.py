@@ -8,12 +8,11 @@ HEADER_LENGTH = 100
 IP = "127.0.0.1"
 PORT = 5678
 
-my_username = input("Sensor Name: ")
-username = 'SensorClient- ' + my_username
+my_username = input("Till Name: ")
+username = 'TillClient- ' + my_username
 
-print("OPTIONS:")
-print("To represent person entering the shop type: 'ENTRY'")
-print("To represent person exiting the shop type:  'EXIT'")
+
+
 
 
 # Create a socket
@@ -37,7 +36,7 @@ client_socket.send(username_header + username)
 while True:
 
     # Wait for user to input a message
-    message = input(f'{my_username} > ')
+    message = input(f'ID of scanned item: ')
 
 
     # If message not empty - send it

@@ -3,7 +3,7 @@ import select
 import errno
 import sys
 
-HEADER_LENGTH = 20
+HEADER_LENGTH = 100
 
 IP = "127.0.0.1"
 PORT = 1234
@@ -58,17 +58,24 @@ while True:
             message_length = int(message_header.decode('utf-8').strip())
             message = client_socket.recv(message_length).decode('utf-8')
 
+            message = message.split()
+            count = message[0]
+
             id = username.split()
             if shop_id == id[-1]:
 
 
 
-                if message =='1':
-                    output = f'There is currently {message} person in {shop_id} now'
+                if count =='1':
+                    count_output = f'There is currently {message} person in {shop_id} now'
                 else:
-                    output = f'There is currently {message} people in {shop_id} now'
+                    count_output = f'There is currently {message} people in {shop_id} now'
 
-                print(output, end="\r")
+                print(count_output)
+
+                print()
+
+
                     #message = message.encode('utf-8')
                     #message_header = f"{len(message):<{HEADER_LENGTH}}".encode('utf-8')
                     #client_socket.send(message_header + message)
