@@ -61,19 +61,17 @@ while True:
             message = message.split()
             count = message[0]
 
+
             id = username.split()
             if shop_id == id[-1]:
 
-
-
                 if count =='1':
-                    count_output = f'There is currently {message} person in {shop_id} now'
+                    count_output = f'There is currently {count} person in {shop_id} now'
                 else:
-                    count_output = f'There is currently {message} people in {shop_id} now'
+                    count_output = f'There is currently {count} people in {shop_id} now'
 
                 print(count_output)
-
-                print()
+                print(str(message))
 
 
                     #message = message.encode('utf-8')

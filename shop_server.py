@@ -224,7 +224,7 @@ while True:
 
                 output_message = str(counter) + ' ' + str(stock_list)
 
-                message_decoded = str(counter)  # store counter in message
+                #message_decoded = str(counter)  # store counter in message
                 # Encode message to bytes, prepare header and convert to bytes, like for username above, then send
                 output_message = output_message.encode('utf-8')
                 message_header = f"{len(output_message):<{HEADER_LENGTH}}".encode('utf-8')
