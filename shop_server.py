@@ -3,6 +3,7 @@ import socket
 import select
 import errno
 import sys
+from _csv import writer
 
 HEADER_LENGTH = 20
 
@@ -42,7 +43,6 @@ def checkStock(itemid):
         csv_reader = csv.reader(csv_file, delimiter=',')  # open the database
         rows = list(csv_reader)  # store rows of database in rows
         length = len(rows)  # find the number of rows
-
         i = 0
         while i != length:
             if rows[i][0] == itemid:
@@ -52,9 +52,11 @@ def checkStock(itemid):
             # when the while loop finishes i will store the line number the item id was found on
         if i == length:
             print("Invalid item ID")
+            csv_file.close()
             return 0
         else:
             itemquantity = int(rows[i][2]) #set the itemquantity to the quantity of the item searched
+            csv_file.close()
             return itemquantity
 
 def tillPurchase(itemid):
@@ -73,11 +75,13 @@ def tillPurchase(itemid):
             # when the while loop finishes i will store the line number the item id was found on
         if i == length:
             print("Invalid item ID")
+            csv_file.close()
             return 0
         else:
             itemquantity = int(rows[i][2]) #set the itemquantity to the quantity of the item searched
             itemquantity = itemquantity - 1 # decrement the quantity
             rows[i][2] = str(itemquantity)
+            csv_file.close()
             my_new_csv = open('Stocklist.csv', 'w', newline='')
             csv_writer = csv.writer(my_new_csv)
             csv_writer.writerows(rows)  # write back to the file the updated rows with the quantity modified
@@ -98,13 +102,19 @@ def addStock(itemid,new_stock_quantity,itemname = 'item description not specifie
                 i = i + 1
             # when the while loop finishes i will store the line number the item id was found on
         if i == length:
-            print("Invalid item ID")
-            return 0
+            csv_file.close()
+            newline = [itemid,itemname,str(new_stock_quantity)]
+            with open('Stocklist.csv','a+', newline='\n') as write_obj:
+                # Create a writer object from csv module
+                csv_writer = writer(write_obj)
+                # Add contents of list as last row in the csv file
+                csv_writer.writerow(newline)
         else:
             itemquantity = int(rows[i][2]) #set the itemquantity to the quantity of the item searched
             itemquantity = itemquantity + new_stock_quantity # add the new stock to the quantity
             rows[i][2] = str(itemquantity)
-            my_new_csv = open('Stocklist.csv', 'w', newline='')
+            csv_file.close()
+            my_new_csv = open('Stocklist.csv', 'w', newline='\n')
             csv_writer = csv.writer(my_new_csv)
             csv_writer.writerows(rows)  # write back to the file the updated rows with the quantity modified
             my_new_csv.close()
