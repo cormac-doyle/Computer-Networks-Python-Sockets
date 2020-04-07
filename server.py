@@ -1,11 +1,14 @@
 import socket
 import select
 import sys
+import mysql.connector
 
 HEADER_LENGTH = 100
 
 IP = "127.0.0.1"
 PORT = 1234
+
+id = 0
 
 # Creates socket
 # socket.AF_INET - address family
@@ -29,6 +32,20 @@ clients = {}
 
 print(f'Listening for connections on {IP}:{PORT}...')
 
+# Connect to mysql database.
+try:
+    cnx = mysql.connector.connect(user='root',
+                                password='project2',
+                               host = '127.0.0.1',
+                               database = 'shopstock')
+    
+except mysql.connector.Error as err:
+    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        print("Something is wrong with your user name or password")
+    elif err.errno == errorcode.ER_BAD_DB_ERROR:
+        print("Database does not exist")
+
+cursor = cnx.cursor(buffered = True)
 
 # Handles message receiving
 def receive_message(client_socket):
@@ -112,6 +129,7 @@ while True:
 
 
             print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
+            print(f'\n{message["data"].decode("utf-8")}\nWAS MESG DATA\n')
 
             message_decoded = message["data"].decode("utf-8")
 
@@ -133,3 +151,49 @@ while True:
 
         # Remove from our list of users
         del clients[notified_socket]
+
+def add_shop(cursor, shop_id, name, people):
+    id = id + 1
+    cmd = "INSERT INTO shop (idshop, shopname, shoppeople) VALUES (\'{}\', \'{}\', \'{}\')".format(id,
+                                                                                     name,
+                                                                                     people)
+    return cursor.execute(cmd)
+
+def get_people_in_shop_name(cursor, shop_name):
+    cmd = "SELECT shoppeople FROM shop WHERE shopname = {}".format(str(shop_name))
+    cursor.execute(cmd)
+    ret = cursor.fetchall()
+    if ret:
+        return ret[0][0]
+    else:
+        return False
+
+def shop_exists(cursor, shop_name):
+    cmd = "SELECT idshop FROM shop WHERE shopname = \'{}\'".format(str(shop_name))
+    cursor.execute(cmd)
+    ret = cursor.fetchall()
+    if ret:
+        return True
+    else:
+        return False
+
+def update_people(cursor, people, shop_name):
+    if shop_exists(cursor, shop_name):
+        cmd = "UPDATE shop SET shoppeople = \'{}\' WHERE shopname = \'{}\'".format( str(people), str(shop_name))
+        cursor.execute(cmd)
+        cnx.commit()
+    else:
+        id = id+1
+        add_shop(cursor, id, shop_name, people)
+
+def get_shop_id(cursor, shop_name):
+    cmd = "SELECT idshop FROM shop WHERE shopname = \'{}\'".format(str(shop_name))
+    cursor.execute(cmd)
+    ret = cursor.fetchall()
+    if ret:
+        return ret[0][0]
+    else:
+        return False
+
+def update_stock(cursor, shop_name):
+    pass
