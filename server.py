@@ -1,7 +1,7 @@
 import socket
 import select
 import sys
-import mysql.connector
+#import mysql.connector
 
 HEADER_LENGTH = 100
 
@@ -33,19 +33,19 @@ clients = {}
 print(f'Listening for connections on {IP}:{PORT}...')
 
 # Connect to mysql database.
-try:
-    cnx = mysql.connector.connect(user='root',
-                                password='project2',
-                               host = '127.0.0.1',
-                               database = 'shopstock')
+# try:
+#     cnx = mysql.connector.connect(user='root',
+#                                 password='project2',
+#                                host = '127.0.0.1',
+#                                database = 'shopstock')
     
-except mysql.connector.Error as err:
-    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Something is wrong with your user name or password")
-    elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print("Database does not exist")
+# except mysql.connector.Error as err:
+#     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+#         print("Something is wrong with your user name or password")
+#     elif err.errno == errorcode.ER_BAD_DB_ERROR:
+#         print("Database does not exist")
 
-cursor = cnx.cursor(buffered = True)
+# cursor = cnx.cursor(buffered = True)
 
 # Handles message receiving
 def receive_message(client_socket):
@@ -129,8 +129,7 @@ while True:
 
 
             print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
-            print(f'\n{message["data"].decode("utf-8")}\nWAS MESG DATA\n')
-
+            print(type(message["data"].decode("utf-8")))
             message_decoded = message["data"].decode("utf-8")
 
 
@@ -155,8 +154,8 @@ while True:
 def add_shop(cursor, shop_id, name, people):
     id = id + 1
     cmd = "INSERT INTO shop (idshop, shopname, shoppeople) VALUES (\'{}\', \'{}\', \'{}\')".format(id,
-                                                                                     name,
-                                                                                     people)
+                                                                                        name,
+                                                                                        people)
     return cursor.execute(cmd)
 
 def get_people_in_shop_name(cursor, shop_name):

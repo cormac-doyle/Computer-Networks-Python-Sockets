@@ -218,11 +218,14 @@ while True:
                 with open('stock.csv', 'r') as csv_file:
                     csv_text = csv_file.readlines()
 
-                stock_list = []
+                stock_list = "&stocklist="
                 for line in csv_text:
-                    stock_list.append(tuple(line.strip().split(', ')))
+                    # print(line)
+                    if "Item_ID" in line:
+                        continue
+                    stock_list = stock_list + str(line)
 
-                output_message = str(counter) + ' ' + str(stock_list)
+                output_message = str(counter) + str(stock_list)
 
                 #message_decoded = str(counter)  # store counter in message
                 # Encode message to bytes, prepare header and convert to bytes, like for username above, then send
