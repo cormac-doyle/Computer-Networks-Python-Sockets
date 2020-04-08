@@ -8,8 +8,9 @@ HEADER_LENGTH = 100
 IP = "127.0.0.1"
 PORT = 5678
 
-my_username = input("Till Name: ")
-username = 'TillClient- ' + my_username
+my_username = input("Username: ")
+username = 'StockUpdateClient- ' + my_username
+
 
 
 # Create a socket
@@ -33,13 +34,16 @@ client_socket.send(username_header + username)
 while True:
 
     # Wait for user to input a message
-    message = input(f'ID of scanned item: ')
+    new_id = input(f'ID number of item: ')
+    item_amount = input(f'Increase by: ')
+
+    message = new_id +  ' ' + item_amount
+
+    print('Stock Update Request Sent.')
 
 
     # If message not empty - send it
     if message:
-
-
         # Encode message to bytes, prepare header and convert to bytes, like for username above, then send
         message = message.encode('utf-8')
         message_header = f"{len(message):<{HEADER_LENGTH}}".encode('utf-8')

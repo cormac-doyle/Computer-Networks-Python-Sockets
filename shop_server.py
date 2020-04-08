@@ -61,26 +61,7 @@ print(f'Listening for connections on {IP}:{PORT_SHOP}...')
 
 
 #-----------------------------------------------------------------------------------
-def check_stock(item_id):
-    item_id = str(item_id)
-    with open('stock.csv', mode='r') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')  # open the database
-        rows = list(csv_reader)  # store rows of database in rows
-        length = len(rows)  # find the number of rows
 
-        i = 0
-        while i != length:
-            if rows[i][0] == itemid:
-                break  # break when the item id  has been located in the database
-            else:
-                i = i + 1
-            # when the while loop finishes i will store the line number the item id was found on
-        if i == length:
-            print("Invalid item ID")
-            return 0
-        else:
-            item_quantity = int(rows[i][2]) #set the itemquantity to the quantity of the item searched
-            return item_quantity
 
 def till_purchase(item_id):
     item_id = str(item_id)
@@ -102,6 +83,32 @@ def till_purchase(item_id):
         else:
             item_quantity = int(rows[i][2]) #set the itemquantity to the quantity of the item searched
             item_quantity = item_quantity - 1 # decrement the quantity
+            rows[i][2] = str(item_quantity)
+            my_new_csv = open('stock.csv', 'w', newline='')
+            csv_writer = csv.writer(my_new_csv)
+            csv_writer.writerows(rows)  # write back to the file the updated rows with the quantity modified
+            my_new_csv.close()
+
+def add_stock(item_id, increase):
+    item_id = str(item_id)
+    with open('stock.csv', mode='r') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')  # open the database
+        rows = list(csv_reader)  # store rows of database in rows
+        length = len(rows)  # find the number of rows
+
+        i = 0
+        while i != length:
+            if rows[i][0] == item_id:
+                break  # break when the item id  has been located in the database
+            else:
+                i = i + 1
+            # when the while loop finishes i will store the line number the item id was found on
+        if i == length:
+            print("Invalid item ID")
+            return 0
+        else:
+            item_quantity = int(rows[i][2]) #set the itemquantity to the quantity of the item searched
+            item_quantity = item_quantity + increase # decrement the quantity
             rows[i][2] = str(item_quantity)
             my_new_csv = open('stock.csv', 'w', newline='')
             csv_writer = csv.writer(my_new_csv)
@@ -198,8 +205,17 @@ while True:
 
             message_decoded = str(message["data"].decode("utf-8"))
 
+
             if client[0] == 'TillClient-':
                 till_purchase(message_decoded)
+
+
+            if client [0] == 'StockUpdateClient-':
+                stock_updates = message_decoded.split()
+
+                increase_by = int(stock_updates[1])
+                add_stock(stock_updates[0],increase_by)
+
 
 
             if client[0] == 'SensorClient-':
